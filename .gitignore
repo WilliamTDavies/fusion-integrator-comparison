@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+.env/
+.conda/
+
+# Generated results
+results/data/*.csv
+results/animations/*.gif
+results/figures/*.svg
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+.idea/
+
+# Jupyter
+.ipynb_checkpoints
