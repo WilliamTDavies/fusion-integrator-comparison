@@ -105,10 +105,10 @@ class System:
 
     def fuse(self, p1, p2):
         new_pid = 1 + len(self.particles)
-        new_pos = np.mean(p1.pos, p2.pos)
         new_mass = p1.mass + p2.mass
-        new_vel = (p1.mass * p1.vel + p2.mass * p2.vel) / new_mass
         new_charge = p1.charge + p2.charge
+        new_pos = (p1.mass * p1.pos + p2.mass * p2.pos) / new_mass
+        new_vel = (p1.mass * p1.vel + p2.mass * p2.vel) / new_mass
 
         p_new = Particle(new_pid, new_pos, new_vel, new_mass, new_charge)
         self.particles.append(p_new)
