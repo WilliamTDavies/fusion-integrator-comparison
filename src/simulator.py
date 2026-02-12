@@ -69,16 +69,51 @@ class System:
     
     # Collisions and fusion
     def handle_collision(self):
-        pass
+        for i, p1 in enumerate(self.particles):
+            for j, p2 in enumerate(self.particles):
+                if (j <= i) or (not (p1.alive and p2.alive)):
+                    continue
+
+                r = np.linalg.norm(p1.pos - p2.pos) + self.eps # Included to prevent singularity
+
+                # Collision logic
+                if r < self.col_dist:
+                    if self.should_fuse(self, p1, p2):
+                        self.fuse(self, p1, p2)
+                    else:
+                        self.elastic_collision(self, p1, p2)
 
     def elastic_collision(self, p1, p2):
-        pass
+        m1, m2 = p1.mass, p2.mass
+        v1, v2 = m1.vel, p2.vel
+
+        p1.vel = (v1 * (m1 - m2) + 2 * v2 * m2) / (m1 + m2)
+        p2.vel = (v2 * (m2 - m1) + 2 * v1 * m1) / (m1 + m2)
 
     def should_fuse(self, p1, p2):
-        pass
+        r = np.linalg.norm(p1.pos - p2.pos) + self.eps # Included to prevent singularity
+        U = self.k * p1.charge * p2.charge / r
+        v_rel = np.linalg.norm(p1.vel - p2.vel) + self.eps # Included to prevent singularity
+        mu = p1.mass * p2.mass / (p1.mass + p2.mass)
+        KE_rel = 0.5 * mu * (v_rel ** 2)
+
+        if KE_rel > self.fuse_thresh * U:
+            return True
+        else:
+            tunnel_prob = np.exp(-U/KE_rel)
+            return np.random.rand() < tunnel_prob
 
     def fuse(self, p1, p2):
-        pass
+        new_pid = 1 + len(self.particles)
+        new_pos = np.mean(p1.pos, p2.pos)
+        new_mass = p1.mass + p2.mass
+        new_vel = (p1.mass * p1.vel + p2.mass * p2.vel) / new_mass
+        new_charge = p1.charge + p2.charge
+
+        p_new = Particle(new_pid, new_pos, new_vel, new_mass, new_charge)
+        self.particles.append(p_new)
+        p1.alive = False
+        p2.alive = False
 
     # Update system
     def step_update(self, integrator, dt):
