@@ -23,4 +23,16 @@ class RK4Integrator(Integrator):
 
 class VelocityVerletIntegrator(Integrator):
     def step(self, system, dt):
-        pass
+        # Position
+        acc = compute_accelerations(system.particles, system.E, system.B)
+        for p, a in zip(system.particles, acc):
+            if not p.alive:
+                continue
+            p.pos += p.vel * dt + 0.5 * a * dt ** 2
+        
+        # Velocity
+        acc_new = compute_accelerations(system.particles, system.E, system.B)
+        for p, a0, a1 in zip(system.particles, acc_new):
+            if not p.alive:
+                continue
+            p.vel += np.mean(a0, a1) * dt
