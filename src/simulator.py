@@ -20,7 +20,7 @@ def coulomb_force(p1, p2, k, eps):
 
 # Acceleration
 def compute_acceleration(particles, E, B):
-    acc = [np.zeros[3] for _ in particles]
+    acc = [np.zeros[2] for _ in particles]
 
     # Main calculation
     for i, p1 in enumerate(particles):
