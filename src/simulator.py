@@ -12,7 +12,8 @@ class Particle:
 
 # Force models
 def lorentz_force(p, E, B):
-    return  p.charge * (E + np.cross(p.vel, B))
+    v_rot = np.array([p.vel[1], -p.vel[0]]) # Rotate velocity 90 degrees clockwise
+    return p.charge * (E + B * v_rot)
 
 def coulomb_force(p1, p2, k, eps):
     r = np.linalg.norm(p1.pos - p2.pos) + eps # Included to prevent singularity
