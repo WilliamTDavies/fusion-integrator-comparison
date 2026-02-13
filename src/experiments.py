@@ -50,7 +50,25 @@ def full_simulation(int_method, system, dt, T_max):
     return runtime
 
 def system_snapshot(system):
-    pass
+    # System variables
+    row = {
+        "t": system.time,
+        "total_energy": system.total_energy()
+    }
+    P = system.total_momentum()
+    row["Px"] = P[0]
+    row["Py"] = P[1]
+    row["Pz"] = P[2]
+
+    # Particle variables
+    for p in system.particles:
+        row[f"x_{p.id}"] = p.pos[0]
+        row[f"y_{p.id}"] = p.pos[1]
+        row[f"vx_{p.id}"] = p.vel[0]
+        row[f"vy_{p.id}"] = p.vel[1]
+        row[f"alive_{p.id}"] = int(p.alive)
+
+    return row
 
 def sweep():
     # Initialisation
