@@ -2,24 +2,22 @@ import pandas as pd
 import time
 import numpy as np
 from pathlib import Path
+from copy import deepcopy
 
 from simulator import Particle, System
 from integrators import EulerIntegrator, RK4Integrator, VelocityVerletIntegrator
 
-def initial_conditions(p_num, E, B, col_dist, fuse_thresh, eps, k):
+def particle_initialisation(p_num):
     # Particle initialisation
     p_list = []
     for i in range(p_num):
         pos = np.random.uniform(-1.0, 1.0, 2)
-        vel = np.random.uniform(-0.25, -0.25, 2)
-        m = 1
+        vel = np.random.uniform(-0.25, 0.25, 2)
+        m = 1.0
         q = np.random.choice(-1.0, 1.0) # Only positive and negative integer charges
         p = Particle(i, pos, vel, m, q)
         p_list.append(p)
-
-    # Create the specific system
-    system = System(p_list, E, B, col_dist, fuse_thresh, eps, k)
-    return system
+    return p_list
 
 def full_simulation(int_method, system, dt, T_max):
     # Integrator selection
@@ -58,7 +56,6 @@ def system_snapshot(system):
     P = system.total_momentum()
     row["Px"] = P[0]
     row["Py"] = P[1]
-    row["Pz"] = P[2]
 
     # Particle variables
     for p in system.particles:
@@ -73,14 +70,15 @@ def system_snapshot(system):
 def sweep():
     # Initialisation
     np.random.seed(0)
-    dt_grid = [1e-6, 5e-6, 1e-5, 5e-5, 1e-4, 5e-4] 
+    dt_grid = [1e-6, 1e-5, 1e-4] 
     T_max = 1.0
     runtime_records = []
+    p_list = particle_initialisation(3)
     # Run experiments
     for method in ["euler", "rk4", "verlet"]:
         for dt in dt_grid:
             print(f"Running: {method} with dt={dt}")
-            system = initial_conditions(3, [0.0, 0.0], 0.1, 0.05, 0.5, 1e-12, 1.0) # Number of particles, electric field, magnetic field, collision distance, fusion threshold, epsilon, coulomb constant
+            system = System(deepcopy(p_list), [0.0, 0.0], 0.1, 0.05, 0.5, 1e-12, 1.0) # Number of particles, electric field, magnetic field, collision distance, fusion threshold, epsilon, coulomb constant
             runtime = full_simulation(method, system, dt, T_max)
             runtime_records.append({
                 "integrator_method": method,
