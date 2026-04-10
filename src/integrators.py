@@ -17,7 +17,8 @@ class EulerIntegrator(Integrator):
             p.pos += p.vel * dt
             p.vel += a * dt
 
-class RK4Integrator(Integrator):
+class RK4Integrator(Integrator): 
+    # NOTE: deepcopy introduces overhead; RK4 runtime is not purely algorithmic
     def step(self, system, dt):
 
         s0 = deepcopy(system.particles) # Copy to prevent accidental deletion
