@@ -1,4 +1,4 @@
-name: fusion-sim-env
+name: integrator-sim-env
 channels:
   - conda-forge
   - defaults
