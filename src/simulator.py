@@ -25,24 +25,35 @@ def coulomb_force(p1, p2, k, eps):
 def compute_acceleration(particles, E, B, k, eps):
     acc = [np.zeros(2) for _ in particles]
 
-    # Main calculation
-    for i, p1 in enumerate(particles):
+    #Coulomb forces
+    n = len(particles)
+    for i in range(n):
+        p1 = particles[i]
         if not p1.alive:
             continue
 
-        F  = lorentz_force(p1, E, B)
+        for j in range(i + 1, n):
+            p2 = particles[j]
+            if not p2.alive:
+                continue
 
-        for j, p2 in enumerate(particles):
-            if i !=j and p2.alive:
-                F += coulomb_force(p1, p2, k, eps)
+            F = coulomb_force(p1, p2, k, eps)
 
-        acc[i] = F / p1.mass
+            acc[i] += F / p1.mass
+            acc[j] -= F / p2.mass  # enforce equal and opposite force
+
+    # External fields
+    for i, p in enumerate(particles):
+        if not p.alive:
+            continue
+
+        F_ext = lorentz_force(p, E, B)
+        acc[i] += F_ext / p.mass
 
     return acc
-
 # Plasma system  
 class System:
-    def __init__(self, particles, E, B, col_dist, fuse_thresh, eps, k):
+    def __init__(self, particles, E, B, col_dist, fuse_thresh, eps, k, enable_collisions=True, enable_fusion=True):
         self.particles = particles
         self.E = E
         self.B = B
@@ -51,6 +62,8 @@ class System:
         self.eps = eps
         self.k = k
         self.time = 0.0
+        self.enable_collisions = enable_collisions # Allow for toggleable collisions
+        self.enable_fusion = enable_fusion # Allow for toggleable fusion
     
     def total_momentum(self):
         momenta = [p.mass * p.vel for p in self.particles if p.alive]
@@ -85,7 +98,7 @@ class System:
 
                 # Collision logic
                 if r < self.col_dist:
-                    if self.should_fuse(p1, p2):
+                    if self.should_fuse(p1, p2) and self.enable_fusion:
                         self.fuse(p1, p2)
                     else:
                         self.elastic_collision(p1, p2)
@@ -115,12 +128,6 @@ class System:
         p1.vel = v1_parallel_new + v1_perp
         p2.vel = v2_parallel_new + v2_perp
 
-        # Stop potential multiple collisions 
-        overlap = self.col_dist - np.linalg.norm(r_vec)
-        if overlap > 0:
-            correction = 0.5 * overlap * r_hat
-            p1.pos -= correction
-            p2.pos += correction
 
     def should_fuse(self, p1, p2):
         r = np.linalg.norm(p1.pos - p2.pos)
@@ -150,5 +157,6 @@ class System:
     # Update system
     def step_update(self, integrator, dt):
         integrator.step(self, dt)
-        self.handle_collision()
+        if self.enable_collisions:
+            self.handle_collision()
         self.time += dt
