@@ -10,10 +10,8 @@ venv/
 .env/
 .conda/
 
-# Generated results
+# Generated data
 results/data/*.csv
-results/animations/*.gif
-results/figures/*.svg
 
 # Logs
 *.log
