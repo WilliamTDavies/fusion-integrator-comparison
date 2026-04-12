@@ -62,19 +62,21 @@ def load_data():
 
 
 # Save
-def finalize_plot(filename, show=True):
+def finalize_plot(filename, FIGS, show=True, save=False):
     path = FIGS / filename
     plt.tight_layout()
-    plt.savefig(path, dpi=150)
-    print(f"Saved: {path}")
 
     if show:
         plt.show()
     else:
         plt.close()
+    
+    if save:
+        plt.savefig(path, dpi=150)
+        print(f"Saved: {path}")
 
 # Energy drift by dt
-def plot_energy_by_dt(data, show=True):
+def plot_energy_by_dt(data, FIGS, show=True, save=False):
     selected_dts = [1e-5, 1e-4, 1e-3]
     methods = list(data.keys())
 
@@ -103,11 +105,11 @@ def plot_energy_by_dt(data, show=True):
     fig.legend(handles, labels, loc="lower center", ncol=3)
 
     plt.tight_layout(rect=[0, 0, 1, 0.9])
-    finalize_plot("energy_by_dt.png", show)
+    finalize_plot("energy_by_dt.png", FIGS, show, save)
 
 
 # Final energy drift scaling
-def plot_energy_scaling(data, show=True):
+def plot_energy_scaling(data,FIGS, show=True, save=False):
     plt.figure()
 
     for method, runs in data.items():
@@ -140,11 +142,11 @@ def plot_energy_scaling(data, show=True):
     plt.legend()
     plt.grid(True)
 
-    finalize_plot("energy_scaling.png", show)
+    finalize_plot("energy_scaling.png", FIGS, show, save)
 
 
 # Momentum drift by dt
-def plot_momentum_by_dt(data, show=True):
+def plot_momentum_by_dt(data, FIGS, show=True, save=False):
     selected_dts = [1e-5, 1e-4, 1e-3]
     methods = list(data.keys())
 
@@ -173,9 +175,9 @@ def plot_momentum_by_dt(data, show=True):
     fig.legend(handles, labels, loc="lower center", ncol=3)
 
     plt.tight_layout(rect=[0, 0, 1, 0.9])
-    finalize_plot("momentum_by_dt.png", show)
+    finalize_plot("momentum_by_dt.png", FIGS, show, save)
 
-def plot_breakdown(data, show=True):
+def plot_breakdown(data, FIGS, show=True, save=False):
     dt_target = 1e-2
     methods = list(data.keys())
 
@@ -199,13 +201,13 @@ def plot_breakdown(data, show=True):
     plt.legend()
     plt.grid(True)
 
-    finalize_plot("breakdown_dt_1e-2.png", show)
+    finalize_plot("breakdown_dt_1e-2.png", FIGS, show, save)
 
 # Main
 if __name__ == "__main__":
     data = load_data()
 
-    plot_energy_by_dt(data, show=False)
-    plot_energy_scaling(data, show=False)
-    plot_momentum_by_dt(data, show=False)
-    plot_breakdown(data, show=False)    
+    plot_energy_by_dt(data, FIGS, show=False, save=True)
+    plot_energy_scaling(data, FIGS, show=False, save=True)
+    plot_momentum_by_dt(data, FIGS, show=False, save=True)
+    plot_breakdown(data, FIGS, show=False, save=True)    
