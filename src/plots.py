@@ -30,7 +30,7 @@ COLORS = {
 
 
 # Data loading
-def load_data():
+def load_data(DATA=DATA):
     files = list(DATA.glob("*.csv"))
     data = {}
 
@@ -65,15 +65,15 @@ def load_data():
 def finalize_plot(filename, FIGS, show=True, save=False):
     path = FIGS / filename
     plt.tight_layout()
+    
+    if save:
+        plt.savefig(path, dpi=150)
+        print(f"Saved: {path}")
 
     if show:
         plt.show()
     else:
         plt.close()
-    
-    if save:
-        plt.savefig(path, dpi=150)
-        print(f"Saved: {path}")
 
 # Energy drift by dt
 def plot_energy_by_dt(data, FIGS, show=True, save=False):
