@@ -30,20 +30,26 @@ The system evolves through discrete timesteps using explicit numerical integrato
 The system evolves a set of charged particles under Newtonian dynamics with electromagnetic and pairwise interaction forces.
 
 For each particle $i$, the equation of motion is:
-$$ m_i \dfrac{\mathrm{d}\vec{v}_i}{\mathrm{d}t} = \sum_{j\neq i} \vec{F}_{ij} + \vec{F}_i^{ext}$$
+
+$$m_i \dfrac{\mathrm{d}\vec{v}_i}{\mathrm{d}t} = \sum_{j\neq i} \vec{F}_{ij} + \vec{F}_i^{ext}$$
 
 Pairwise Coulomb interaction (softened):
-$$\vec{F}_{ij} = \dfrac{kq_iq_j}{(|\vec{r}_{ij}|^2 + \epsilon^2)^{3/2}} \vec{r}_{ij} $$
+
+$$ \vec{F}_{ij} = \dfrac{kq_iq_j}{(|\vec{r}_{ij}|^2 + \epsilon^2)^{3/2}} \vec{r}_{ij} $$
 
 External Lorentz force:
+
 $$\vec{F}_i^{ext}  = q_i(\vec{E} + \vec{v}_i \times \vec{B})$$
 
 where:
+
 - $\vec{r_{ij}} = \vec{r_i} - \vec{r_j}$
 - $\epsilon$ is a softening parameter preventing singularities
 
 Energy function:
-$$E = \sum_{i} \dfrac{1}{2} m_i |\vec{v_i}|^2 + \sum_{i<j}\dfrac{kq_iq_j}{\sqrt{|\vec{r_{ij}}|^2 + \epsilon^2}}$$
+
+
+$$E = \sum_{i} \dfrac{1}{2} m_i |\vec{v_i}|^2 + \sum_{i \lt j} \dfrac{kq_iq_j}{\sqrt{|\vec{r_{ij}}|^2 + \epsilon^2}} $$
 
 ## Integrators Implemented
 
